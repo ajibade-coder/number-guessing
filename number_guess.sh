@@ -80,9 +80,19 @@ ROUNDS_IN_GAME=1
   # when the user gets the it, winning message
   echo "You guessed it in $ROUNDS_IN_GAME tries. The secret number was $RANDOM_NUMBER. Nice job!"
 
+ SN=$($PSQL "SELECT player_id FROM users WHERE name = '$argdata' " )
+
+UPDATEGAMESTABLE=$($PSQL "INSERT INTO games(player_id,  winninground) VALUES($SN, $ROUNDS_IN_GAME )")
+
+
+
+
+
 
 
 } # end of guessing game func #########
+
+
 
 
 
@@ -91,12 +101,22 @@ ROUNDS_IN_GAME=1
 if [[ -z $PLAYER_NAME ]]
 then
   echo "Welcome, $USERNAME_INPUT! It looks like this is your first time here."
+  # insert player into database
+  NEWPLAYERDETIAL=$($PSQL "INSERT INTO users(name) VALUES('$USERNAME_INPUT') ")
+
+  #play game with username
+  GUESSING_GAME $USERNAME_INPUT
+
+
 
   # if player is found
 else
 
 
     echo "Welcome back, <username>! You have played <games_played> games, and your best game took <best_game> guesses."
+
+      #play game with username
+      GUESSING_GAME $USERNAME_INPUT
 
   echo ""
 
