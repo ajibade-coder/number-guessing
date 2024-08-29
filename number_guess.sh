@@ -9,10 +9,9 @@ echo "Enter your username:"
 # getting user input into a variable
 read USERNAME_INPUT
 
-echo $USERNAME_INPUT
 
 # querying data base to find username from input gotten
-PLAYER_NAME=$($PSQL "SELECT  name, games_id, winninground  FROM users JOIN games USING(player_id)")
+PLAYER_NAME=$($PSQL "SELECT  name FROM users WHERE name = '$USERNAME_INPUT' ")
 
 
 
@@ -47,7 +46,7 @@ ROUNDS_IN_GAME=1
    do
   
   # if user guess is not a number
-  if [[ $USER_GUESS =~ ^-?[0-9]+$ ]]
+  if [[  ! $USER_GUESS =~ ^-?[0-9]+$ ]]
   then 
     echo "That is not an integer, guess again:"
     ASK_USER
@@ -56,8 +55,9 @@ ROUNDS_IN_GAME=1
   else
   # if user guess is less than the random_number
   ###################################################################################################
-     if [[ $USER_GUESS -lt $RANDOM_NUMBER ]] 
+     if [[ $USER_GUESS -gt $RANDOM_NUMBER ]] 
     then
+    echo $RANDOM_NUMBER
       echo "It's lower than that, guess again:"
       ASK_USER
 
@@ -71,7 +71,9 @@ ROUNDS_IN_GAME=1
 
 
   # increment the rounds in gaming session
-  ROUNDS_IN_GAME=$(( N + 1 ))
+  ROUNDS_IN_GAME=$(( ROUNDS_IN_GAME + 1 ))
+  echo $ROUNDS_IN_GAME
+
 
   done
   ################################# end of until loop
@@ -82,9 +84,8 @@ ROUNDS_IN_GAME=1
 
  SN=$($PSQL "SELECT player_id FROM users WHERE name = '$argdata' " )
 
-UPDATEGAMESTABLE=$($PSQL "INSERT INTO games(player_id,  winninground) VALUES($SN, $ROUNDS_IN_GAME )")
 
-
+UPDATEGAMESTABLE=$($PSQL "INSERT INTO games(player_id, winninground) VALUES($SN, $ROUNDS_IN_GAME)")
 
 
 
@@ -111,14 +112,15 @@ then
 
   # if player is found
 else
+  GAMES_PLAYED=$($PSQL "SELECT COUNT(*) FROM users JOIN games USING(player_id) WHERE name = '$USERNAME_INPUT' ")
+  BEST_GAME=$($PSQL "SELECT MIN( winninground) FROM users JOIN games USING(player_id) WHERE name = '$USERNAME_INPUT' ")
+  USER_IN_DATA=$($PSQL "SELECT name FROM users WHERE name = '$USERNAME_INPUT' ")
 
-
-    echo "Welcome back, <username>! You have played <games_played> games, and your best game took <best_game> guesses."
+    echo "Welcome back, $USER_IN_DATA! You have played $GAMES_PLAYED games, and your best game took $BEST_GAME guesses."
 
       #play game with username
       GUESSING_GAME $USERNAME_INPUT
 
-  echo ""
 
 fi
 
