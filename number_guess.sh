@@ -12,18 +12,79 @@ read USERNAME_INPUT
 echo $USERNAME_INPUT
 
 # querying data base to find username from input gotten
-PLAYER_NAME=$($PSQL "SELECT * FROM users JOIN games USING(player_id)")
+PLAYER_NAME=$($PSQL "SELECT  name, games_id, winninground  FROM users JOIN games USING(player_id)")
 
 
-# func for the guessing_game
+
+
+
+# func for the guessing_game ######################################################################
 GUESSING_GAME() {
-  
 
-}
+# accessing arg for the function
+argdata=$1
 
 
 # generating  a random number from 1 to 1000
 RANDOM_NUMBER=$(( RANDOM % 1000 + 1 ))
+
+
+# asking user to guess
+echo "Guess the secret number between 1 and 1000:"
+
+# read users input func
+ASK_USER() {
+read USER_GUESS
+}
+
+# calling the ask user func
+ASK_USER
+
+ROUNDS_IN_GAME=1
+
+  # when firts trail not correct user enters into an until loop till the guess matches the random number ############################
+  until [[ $USER_GUESS -eq  $RANDOM_NUMBER ]]
+   do
+  
+  # if user guess is not a number
+  if [[ $USER_GUESS =~ ^-?[0-9]+$ ]]
+  then 
+    echo "That is not an integer, guess again:"
+    ASK_USER
+
+  # if user guess is a number
+  else
+  # if user guess is less than the random_number
+  ###################################################################################################
+     if [[ $USER_GUESS -lt $RANDOM_NUMBER ]] 
+    then
+      echo "It's lower than that, guess again:"
+      ASK_USER
+
+    # if user guess is greater then the random number
+      else
+      echo "It's higher than that, guess again:"
+      ASK_USER
+    fi
+#############################################################################################
+  fi
+
+
+  # increment the rounds in gaming session
+  ROUNDS_IN_GAME=$(( N + 1 ))
+
+  done
+  ################################# end of until loop
+
+
+  # when the user gets the it, winning message
+  echo "You guessed it in $ROUNDS_IN_GAME tries. The secret number was $RANDOM_NUMBER. Nice job!"
+
+
+
+} # end of guessing game func #########
+
+
 
 
 # if player name not found, then let register play in database
@@ -33,6 +94,7 @@ then
 
   # if player is found
 else
+
 
     echo "Welcome back, <username>! You have played <games_played> games, and your best game took <best_game> guesses."
 
