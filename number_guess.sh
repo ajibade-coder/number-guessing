@@ -89,7 +89,6 @@ SN=$($PSQL "SELECT player_id FROM users WHERE name = '$argdata' " )
  UPDATEGAMESTABLE=$($PSQL "INSERT INTO games(player_id, winninground) VALUES($SN, $ROUNDS_IN_GAME)")
 
   echo "You guessed it in $ROUNDS_IN_GAME tries. The secret number was $RANDOM_NUMBER. Nice job!"
-
 } # end of guessing game func #########
 
 
