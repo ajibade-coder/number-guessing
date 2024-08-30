@@ -23,14 +23,11 @@ GUESSING_GAME() {
 # accessing arg for the function
 argdata=$1
 
-
-echo "what u passed is $argdata"
-
-
 # generating  a random number from 1 to 1000
 RANDOM_NUMBER=$(( RANDOM % 1000 + 1 ))
 
-echo "na ran be this $RANDOM_NUMBER"
+echo "$RANDOM_NUMBER"
+
 
 
 # asking user to guess
@@ -85,7 +82,6 @@ ROUNDS_IN_GAME=1
 
   # when the user gets the it, winning message
 SN=$($PSQL "SELECT player_id FROM users WHERE name = '$argdata' " )
- echo "this the passed arg $argdata "
  UPDATEGAMESTABLE=$($PSQL "INSERT INTO games(player_id, winninground) VALUES($SN, $ROUNDS_IN_GAME)")
 
   echo "You guessed it in $ROUNDS_IN_GAME tries. The secret number was $RANDOM_NUMBER. Nice job!"
@@ -113,10 +109,9 @@ then
 else
   GAMES_PLAYED=$($PSQL "SELECT COUNT(*) FROM users JOIN games USING(player_id) WHERE name = '$USERNAME_INPUT' ")
   BEST_GAME=$($PSQL "SELECT MIN( winninground) FROM users JOIN games USING(player_id) WHERE name = '$USERNAME_INPUT' ")
-  USER_IN_DATA=$($PSQL "SELECT name FROM users WHERE name = '$USERNAME_INPUT' ")
+  USERNAME=$($PSQL "SELECT name FROM users WHERE name = '$USERNAME_INPUT' ")
 
-    echo "Welcome back, $USER_IN_DATA! You have played $GAMES_PLAYED games, and your best game took $BEST_GAME guesses."
-
+    echo "Welcome back, $USERNAME! You have played $GAMES_PLAYED games, and your best game took $BEST_GAME guesses."
       #play game with username
    GUESSING_GAME "$USERNAME_INPUT"
 
