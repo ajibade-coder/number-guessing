@@ -24,8 +24,13 @@ GUESSING_GAME() {
 argdata=$1
 
 
+echo "what u passed is $argdata"
+
+
 # generating  a random number from 1 to 1000
 RANDOM_NUMBER=$(( RANDOM % 1000 + 1 ))
+
+echo "na ran be this $RANDOM_NUMBER"
 
 
 # asking user to guess
@@ -49,6 +54,8 @@ ROUNDS_IN_GAME=1
   if [[  ! $USER_GUESS =~ ^-?[0-9]+$ ]]
   then 
     echo "That is not an integer, guess again:"
+    echo "1st reason"
+     echo "userguess: $USER_GUESS  random_number: $RANDOM_NUMBER"
     ASK_USER
 
   # if user guess is a number
@@ -59,11 +66,15 @@ ROUNDS_IN_GAME=1
     then
     echo $RANDOM_NUMBER
       echo "It's lower than that, guess again:"
+      echo "2nd reason"
+      echo "userguess: $USER_GUESS  random_number: $RANDOM_NUMBER"
       ASK_USER
 
     # if user guess is greater then the random number
       else
       echo "It's higher than that, guess again:"
+      echo "3rd reason"
+       echo "userguess: $USER_GUESS  random_number: $RANDOM_NUMBER"
       ASK_USER
     fi
 #############################################################################################
@@ -80,16 +91,11 @@ ROUNDS_IN_GAME=1
 
 
   # when the user gets the it, winning message
+SN=$($PSQL "SELECT player_id FROM users WHERE name = '$argdata' " )
+ echo "this the passed arg $argdata "
+ UPDATEGAMESTABLE=$($PSQL "INSERT INTO games(player_id, winninground) VALUES($SN, $ROUNDS_IN_GAME)")
+
   echo "You guessed it in $ROUNDS_IN_GAME tries. The secret number was $RANDOM_NUMBER. Nice job!"
-
- SN=$($PSQL "SELECT player_id FROM users WHERE name = '$argdata' " )
-
-
-UPDATEGAMESTABLE=$($PSQL "INSERT INTO games(player_id, winninground) VALUES($SN, $ROUNDS_IN_GAME)")
-
-
-
-
 
 } # end of guessing game func #########
 
@@ -105,8 +111,9 @@ then
   # insert player into database
   NEWPLAYERDETIAL=$($PSQL "INSERT INTO users(name) VALUES('$USERNAME_INPUT') ")
 
+  #PLAYER_NAME=$($PSQL "SELECT  name FROM users WHERE name = '$USERNAME_INPUT' ")
   #play game with username
-  GUESSING_GAME $USERNAME_INPUT
+  GUESSING_GAME "$USERNAME_INPUT"
 
 
 
@@ -119,8 +126,7 @@ else
     echo "Welcome back, $USER_IN_DATA! You have played $GAMES_PLAYED games, and your best game took $BEST_GAME guesses."
 
       #play game with username
-      GUESSING_GAME $USERNAME_INPUT
-
+   GUESSING_GAME "$USERNAME_INPUT"
 
 fi
 
