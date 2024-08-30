@@ -54,8 +54,6 @@ ROUNDS_IN_GAME=1
   if [[  ! $USER_GUESS =~ ^-?[0-9]+$ ]]
   then 
     echo "That is not an integer, guess again:"
-    echo "1st reason"
-     echo "userguess: $USER_GUESS  random_number: $RANDOM_NUMBER"
     ASK_USER
 
   # if user guess is a number
@@ -66,15 +64,11 @@ ROUNDS_IN_GAME=1
     then
     echo $RANDOM_NUMBER
       echo "It's lower than that, guess again:"
-      echo "2nd reason"
-      echo "userguess: $USER_GUESS  random_number: $RANDOM_NUMBER"
       ASK_USER
 
     # if user guess is greater then the random number
       else
       echo "It's higher than that, guess again:"
-      echo "3rd reason"
-       echo "userguess: $USER_GUESS  random_number: $RANDOM_NUMBER"
       ASK_USER
     fi
 #############################################################################################
@@ -83,7 +77,6 @@ ROUNDS_IN_GAME=1
 
   # increment the rounds in gaming session
   ROUNDS_IN_GAME=$(( ROUNDS_IN_GAME + 1 ))
-  echo $ROUNDS_IN_GAME
 
 
   done
